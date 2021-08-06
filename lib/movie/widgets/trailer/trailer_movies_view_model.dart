@@ -13,7 +13,7 @@ class TrailerMoviesViewModel extends StateNotifier<AsyncState<List<MovieVideos>>
   TrailerMoviesViewModel(this._movieService) : super(Initial([])) {
   }
 
-  getMovieById(id) async {
+  getVideosById(id) async {
     state = Loading(state.data);
     try {
       var movies = await _movieService.getVideos(id);

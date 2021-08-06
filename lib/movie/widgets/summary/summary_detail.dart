@@ -13,14 +13,17 @@ class SummaryDetail extends StatelessWidget{
         body:
         // SingleChildScrollView(
         // child:
+        // Column(
+        //   children: [
+
         Container(
             child: Column(
               children: [
-                Expanded(flex: 3,child: MovieDetail()),
+                Expanded(flex: 5,child: MovieDetail()),
                 // SizedBox(height: 20),
-                Expanded(flex: 1, child: TrailerMovies()),
+                Expanded(flex: 2, child: TrailerMovies()),
                 // SizedBox(height: 20,),
-                Expanded(flex: 1,child: MovieCredit()),
+                Expanded(flex: 2,child: MovieCredit()),
                 // SizedBox(height: 10,)
               ],
             ),
