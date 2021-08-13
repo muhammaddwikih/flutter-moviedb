@@ -13,11 +13,9 @@ class MovieCredit extends StatelessWidget {
       context.read(creditMoviesViewModelProvider.notifier).getMovieById(id);
     });
 
-    return Scaffold(
-        backgroundColor: const Color(0xFF191926),
-        body: Column(
+    return Column(
           children: [
-            Expanded(child: Consumer(builder: (context, watch, child) {
+            Consumer(builder: (context, watch, child) {
               final state = watch(creditMoviesViewModelProvider);
               if (state is Loading) {
                 return Container(
@@ -29,9 +27,7 @@ class MovieCredit extends StatelessWidget {
                 return Container(
                   child: Column(
                     children: [
-                      Expanded (
-                          flex: 0,
-                  child: Row(
+                  Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Container(
@@ -56,11 +52,10 @@ class MovieCredit extends StatelessWidget {
                                     fontWeight: FontWeight.w300),
                               )),
                         ],
-                      )),
-                      Expanded(
-                          flex: 1,
-                      child: Container(
+                      ),
+                      Container(
                         width: double.infinity,
+                        height: 130,
                         child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: state.data.length,
@@ -88,13 +83,15 @@ class MovieCredit extends StatelessWidget {
                                   ),
                                 );
                             }),
-                      ))
+                      )
+
                     ],
                   ),
                 );
               }
-            }))
+            })
+
           ],
-        ));
+        );
   }
 }

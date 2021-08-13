@@ -17,71 +17,51 @@ class TrailerMovies extends StatelessWidget {
       context.read(trailerMoviesViewModelProvider.notifier).getVideosById(id);
     });
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF191926),
-      body: Column(
-        children: [
-          Expanded(
-              flex: 0,
-              child: Container(
-                alignment: Alignment.topLeft,
-                margin: EdgeInsets.only(top: 10, left: 20, bottom: 10),
-                child: Text(
-                  "Trailer",
-                  style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white),
-                ),
-              )),
-          Expanded(
-              flex: 4,
-              child: Consumer(builder: (context, watch, child) {
-                  final state = watch(trailerMoviesViewModelProvider);
-                  // YoutubePlayerController _controller = YoutubePlayerController(
-                  //   initialVideoId: state.data[0].key,
-                  //   flags: YoutubePlayerFlags(
-                  //     autoPlay: false,
-                  //     mute: false,
-                  //     disableDragSeek: false,
-                  //     loop: false,
-                  //     isLive: false,
-                  //     forceHD: false,
-                  //   ),
-                  // );
-                  if (state is Loading) {
-                    return Container(
-                        height: 400,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator());
-                  } else {
-                    return Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20),
-                      child: YoutubePlayer(
-                        controller: YoutubePlayerController(
-                          initialVideoId: state.data[0].key,
-                          flags: YoutubePlayerFlags(
-                            // hideControls: true,
-                            hideThumbnail: true,
-                            controlsVisibleAtStart: true,
-                            autoPlay: false,
-                            mute: false,
-                          ),
-                        ),
-                        showVideoProgressIndicator: true,
-                        progressIndicatorColor: Colors.amber,
-                        progressColors: ProgressBarColors(
-                          playedColor: Colors.amber,
-                          handleColor: Colors.amberAccent,
-                        ),
-                        onReady: () => {print('Youtube Ready')},
-                      ),
-                    );
-                  }
-              })),
-        ],
+    return Column(children: [
+      Container(
+        alignment: Alignment.topLeft,
+        margin: EdgeInsets.only(top: 10, left: 20, bottom: 10),
+        child: Text(
+          "Trailer",
+          style: TextStyle(
+              fontSize: 21, fontWeight: FontWeight.w600, color: Colors.white),
+        ),
       ),
-    );
+      Consumer(builder: (context, watch, child) {
+        final state = watch(trailerMoviesViewModelProvider);
+        print("TRAILER LOG ybji16u608U");
+        print(state);
+        if (state is Loading) {
+          return Container(
+              height: 400,
+              width: double.infinity,
+              alignment: Alignment.center,
+              child: CircularProgressIndicator());
+        } else {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: YoutubePlayer(
+              controller: YoutubePlayerController(
+                initialVideoId: state.data[0].key,
+                flags: YoutubePlayerFlags(
+                  // hideControls: true,
+                  hideThumbnail: true,
+                  controlsVisibleAtStart: true,
+                  autoPlay: true,
+                  mute: false,
+                ),
+              ),
+              showVideoProgressIndicator: true,
+              progressIndicatorColor: Colors.amber,
+              progressColors: ProgressBarColors(
+                playedColor: Colors.amber,
+                handleColor: Colors.amberAccent,
+              ),
+              onReady: () => {print('Youtube Ready')},
+            ),
+          );
+        }
+      })
+    ]);
   }
 }
