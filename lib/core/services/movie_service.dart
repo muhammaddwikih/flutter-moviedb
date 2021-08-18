@@ -1,17 +1,22 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:moviedb/core/common/constants.dart';
 import 'package:moviedb/core/models/movie.dart';
 import 'package:moviedb/core/models/movie_detail.dart';
 import 'package:moviedb/core/providers/dio_provider.dart';
+import 'package:moviedb/core/providers/secure_storage.dart';
 
 final movieServiceProvider =
-    Provider((ref) => MovieService(ref.read(dioProvider)));
+Provider((ref) => MovieService(ref.read(dioProvider), ref.read(storageProvider)));
 
 class MovieService {
   final Dio _dio;
+  final FlutterSecureStorage _secureStorage;
 
-  MovieService(this._dio);
+  MovieService(this._dio, this._secureStorage);
 
   Future<List<Movie>> getPopularMovie(int page) async {
     List<Movie> movies = [];
@@ -62,6 +67,7 @@ class MovieService {
   }
 
   Future<List<MovieDetail>> getDetailMovie(int id) async {
+    // _secureStorage.write(key: id.toString(), value: "value");
     List<MovieDetail> movies = [];
     List<Genre> genres = [];
     var response = await _dio.get(
@@ -77,10 +83,9 @@ class MovieService {
           );
           genres.add(newGenre);
         }
-
       }
-      print("MASUK");
-      print(response.data['id']);
+      // final cek = await _secureStorage.read(key: response.data['id']);
+
       MovieDetail newMovie = new MovieDetail(
         response.data['id'],
         response.data['title'],
@@ -90,14 +95,11 @@ class MovieService {
         'https://www.themoviedb.org/t/p/w780${response.data['backdrop_path']}',
         response.data['overview'],
         genres,
+        false
+        // cek == null ? false : true
       );
-      print("moviee");
-      print(newMovie);
       movies.add(newMovie);
-      print("RESPON MOVIES2");
-      print(movies);
     }
-    print("SELESAI");
     return movies;
   }
 
@@ -136,4 +138,45 @@ class MovieService {
     }
     return movies;
   }
+
+  void saveFavoriteMovie(MovieDetail movie) async {
+    String temp = jsonEncode(movie.toJson());
+
+    _secureStorage.write(key: movie.id.toString(), value: temp);
+  }
+
+  deleteFavMovie(MovieDetail movie) async {
+    final cek = await _secureStorage.read(key: movie.id.toString());
+    if(cek != null) {
+      _secureStorage.delete(key: movie.id.toString());
+    }
+
+  }
+
+  cekMovieisFavorite(MovieDetail movie) async{
+    final cek = await _secureStorage.read(key: movie.id.toString());
+    print(cek);
+    if(cek == null){
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  Future<List<MovieDetail>> getMovieList() async{
+    List<MovieDetail> lists = [];
+    final test = await _secureStorage.readAll();
+    test.forEach((key, value) {
+      if(value != "value") {
+        Map<String, dynamic> userMap = jsonDecode(value);
+        MovieDetail user = MovieDetail.fromJson(userMap);
+        lists.add(user);
+      }
+    });
+    print("lists");
+    print(lists);
+    return lists;
+  }
+
+
 }

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moviedb/core/models/async_state.dart';
 import 'package:moviedb/movie/widgets/detail/detail_movies_view_model.dart';
 
-class MovieDetail extends StatelessWidget {
+class MovieDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int id = ModalRoute.of(context)!.settings.arguments as int;
@@ -41,12 +41,12 @@ class MovieDetail extends StatelessWidget {
         //   ),
         //   body:
 
-    // Container(
-    //   color: Colors.yellow,
-    //   width: double.infinity,
-    //   height: 500,
-    // );
-      Consumer(
+        // Container(
+        //   color: Colors.yellow,
+        //   width: double.infinity,
+        //   height: 500,
+        // );
+        Consumer(
       builder: (context, watch, child) {
         final state = watch(detailMoviesViewModelProvider);
         if (state is Loading) {
@@ -67,21 +67,23 @@ class MovieDetail extends StatelessWidget {
                   style: TextStyle(
                       fontSize: 21,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white),
+                      color: Colors.white,
+                      fontFamily: 'OpenSans'),
                 ),
               ),
               Container(
                 height: 70,
                 alignment: Alignment.topLeft,
-                margin: EdgeInsets.only(left: 20),
+                margin: EdgeInsets.symmetric(horizontal: 20),
                 child: AutoSizeText(
                   state.data[0].sinopsis,
-                  maxLines: 2,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      color: Colors.white),
+                      color: Colors.white,
+                      fontFamily: 'OpenSans'),
                   textAlign: TextAlign.left,
                 ),
               )
@@ -90,8 +92,6 @@ class MovieDetail extends StatelessWidget {
         }
       },
     );
-
-
 
     // Consumer(builder: (context, watch, child) {
     //   final state = watch(detailMoviesViewModelProvider);

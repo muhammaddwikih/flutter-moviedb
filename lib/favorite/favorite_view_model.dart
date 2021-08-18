@@ -3,19 +3,19 @@ import 'package:moviedb/core/models/async_state.dart';
 import 'package:moviedb/core/models/movie_detail.dart';
 import 'package:moviedb/core/services/movie_service.dart';
 
-final detailMoviesViewModelProvider =
-StateNotifierProvider<DetailMoviesViewModel, AsyncState<List<MovieDetail>>>(
-        (ref) => DetailMoviesViewModel(ref.read(movieServiceProvider)));
+final favoriteViewModelProvider =
+StateNotifierProvider<FavoriteViewModel, AsyncState<List<MovieDetail>>>(
+        (ref) => FavoriteViewModel(ref.read(movieServiceProvider)));
 
-class DetailMoviesViewModel extends StateNotifier<AsyncState<List<MovieDetail>>> {
+class FavoriteViewModel extends StateNotifier<AsyncState<List<MovieDetail>>> {
   final MovieService _movieService;
-  DetailMoviesViewModel(this._movieService) : super(Initial([])) {
+  FavoriteViewModel(this._movieService) : super(Initial([])) {
   }
 
-  getMovieById(id) async {
+  getMovieList() async {
     state = Loading(state.data);
     try {
-      var movies = await _movieService.getDetailMovie(id);
+      var movies = await _movieService.getMovieList();
       state = Success(movies);
     } catch (exception) {
       state = Error('Something went wrong', state.data);

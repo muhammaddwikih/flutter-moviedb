@@ -24,13 +24,11 @@ class TrailerMovies extends StatelessWidget {
         child: Text(
           "Trailer",
           style: TextStyle(
-              fontSize: 21, fontWeight: FontWeight.w600, color: Colors.white),
+              fontSize: 21, fontWeight: FontWeight.w600, color: Colors.white, fontFamily: 'OpenSans'),
         ),
       ),
       Consumer(builder: (context, watch, child) {
         final state = watch(trailerMoviesViewModelProvider);
-        print("TRAILER LOG ybji16u608U");
-        print(state);
         if (state is Loading) {
           return Container(
               height: 400,
@@ -47,7 +45,7 @@ class TrailerMovies extends StatelessWidget {
                   // hideControls: true,
                   hideThumbnail: true,
                   controlsVisibleAtStart: true,
-                  autoPlay: true,
+                  autoPlay: false,
                   mute: false,
                 ),
               ),
