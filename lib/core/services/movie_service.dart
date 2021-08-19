@@ -139,13 +139,13 @@ class MovieService {
     return movies;
   }
 
-  void saveFavoriteMovie(MovieDetail movie) async {
+  Future saveFavoriteMovie(MovieDetail movie) async {
     String temp = jsonEncode(movie.toJson());
 
     _secureStorage.write(key: movie.id.toString(), value: temp);
   }
 
-  deleteFavMovie(MovieDetail movie) async {
+  Future deleteFavMovie(MovieDetail movie) async {
     final cek = await _secureStorage.read(key: movie.id.toString());
     if(cek != null) {
       _secureStorage.delete(key: movie.id.toString());
@@ -176,6 +176,16 @@ class MovieService {
     print("lists");
     print(lists);
     return lists;
+  }
+
+  getGenereList(List<Genre> genre) {
+    List<String> nama = [];
+
+    genre.forEach((element) {
+      nama.add(element.name);
+    });
+
+    return nama.join(", ");
   }
 
 

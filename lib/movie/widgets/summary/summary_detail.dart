@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:moviedb/core/models/async_state.dart';
 import 'package:moviedb/core/models/movie_detail.dart';
+import 'package:moviedb/core/providers/analytics_provider.dart';
 import 'package:moviedb/movie/widgets/credit/credit_movies.dart';
 import 'package:moviedb/movie/widgets/detail/detail_movies.dart';
 import 'package:moviedb/movie/widgets/detail/detail_movies_view_model.dart';
@@ -20,6 +21,10 @@ class SummaryDetail extends StatelessWidget {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       context.read(detailMoviesViewModelProvider.notifier).getMovieById(id);
     });
+    
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      await context.read(analyticsProvider).logEvent(name: "home_screen");
+    });
 
     Widget appBar = SliverAppBar(
       expandedHeight: 250.0,
@@ -28,13 +33,14 @@ class SummaryDetail extends StatelessWidget {
       flexibleSpace:
           Consumer(builder: (context, watch, child) {
         final state = watch(detailMoviesViewModelProvider);
-        if (state is Loading) {
+        if ( (state is Loading) || (state is Initial)) {
           return Container(
               height: 230,
               width: double.infinity,
               alignment: Alignment.center,
               child: CircularProgressIndicator());
         } else {
+
           return Column(children: [
             Container(
               width: double.infinity,
@@ -215,7 +221,6 @@ class SummaryDetail extends StatelessWidget {
         backgroundColor: Colors.transparent,
         flexibleSpace: Consumer(builder: (context, watch, child) {
           final state = watch(detailMoviesViewModelProvider);
-
           List<Widget> genreBoxBuilder() {
             List<Widget> genreBox = [];
             var jml = 0;
@@ -245,14 +250,14 @@ class SummaryDetail extends StatelessWidget {
             }
             return genreBox;
           }
-
-          if (state is Loading) {
+          if ((state is Loading) || (state is Initial)) {
             return Container(
                 height: 250,
                 width: double.infinity,
                 alignment: Alignment.center,
                 child: CircularProgressIndicator());
           } else {
+            context.read(summaryFavoriteViewModelProvider.notifier).checkFav(state.data[0]);
             return Column(children: [
               Container(
                 width: double.infinity,

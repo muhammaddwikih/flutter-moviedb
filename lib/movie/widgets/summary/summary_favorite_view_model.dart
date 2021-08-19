@@ -5,17 +5,16 @@ import 'package:moviedb/core/models/movie_detail.dart';
 import 'package:moviedb/core/services/movie_service.dart';
 
 final summaryFavoriteViewModelProvider =
-StateNotifierProvider<summaryFavoriteViewModel, bool>(
-        (ref) => summaryFavoriteViewModel(ref.read(movieServiceProvider)));
+StateNotifierProvider<SummaryFavoriteViewModel, bool>(
+        (ref) => SummaryFavoriteViewModel(ref.read(movieServiceProvider)));
 
-class summaryFavoriteViewModel extends StateNotifier<bool> {
+class SummaryFavoriteViewModel extends StateNotifier<bool> {
   final MovieService _movieService;
 
-  summaryFavoriteViewModel(this._movieService) : super(false);
+  SummaryFavoriteViewModel(this._movieService) : super(false);
 
   void favorite(id) {
     var cek = _movieService.cekMovieisFavorite(id);
-
     if (state == true) {
       deleteFavMovie(id);
       state = false;
@@ -46,7 +45,7 @@ class summaryFavoriteViewModel extends StateNotifier<bool> {
 
   checkFav(id) async {
     try {
-      var cek = _movieService.cekMovieisFavorite(id);
+      var cek = await _movieService.cekMovieisFavorite(id);
       print(cek);
       state = cek;
     } catch (exception) {

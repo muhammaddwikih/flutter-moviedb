@@ -1,18 +1,51 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:moviedb/core/providers/analytics_provider.dart';
 import 'package:moviedb/main_tab/main_tab_screen.dart';
 import 'package:moviedb/movie/widgets/detail/detail_movies.dart';
 import 'package:moviedb/movie/widgets/summary/summary_detail.dart';
+import 'package:moviedb/movie_firebase/movie_firebase.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() => MyAppState();
+}
+
+class MyAppState extends State {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey(debugLabel: "Main Navigator");
+
+  Future<void> setupInteractedMessage(BuildContext context) async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    print(token);
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print(message.data['path']);
+      if(message.data['path'] != null){
+        navigatorKey.currentState!.pushNamed(message.data['path']);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      setupInteractedMessage(context);
+    });
+
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Movie Data',
+      navigatorObservers: [
+        context.read(observerProvider)
+      ],
       theme: ThemeData(
           primarySwatch: Colors.blue,
           fontFamily: 'Poppins',
@@ -28,6 +61,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => MainTabScreen(),
         '/detail': (context) => SummaryDetail(),
+        '/firebase': (context) => MovieFirebase()
       }
     );
     }

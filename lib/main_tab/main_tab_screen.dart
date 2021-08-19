@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:moviedb/core/providers/analytics_provider.dart';
 import 'package:moviedb/favorite/favorite_screen.dart';
 import 'package:moviedb/main_tab/main_tab_view_model.dart';
 import 'package:moviedb/movie/movie_screen.dart';
 import 'package:moviedb/people/people_screen.dart';
+import 'package:flutter/cupertino.dart';
 
 class MainTabScreen extends ConsumerWidget {
+
   Widget getScreen(int index) {
     switch (index) {
       case 0:
@@ -22,6 +25,10 @@ class MainTabScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      await context.read(analyticsProvider).logEvent(name: "Detail Movie");
+    });
+
     final _index = watch(mainTabViewModelProvider);
 
     return Scaffold(

@@ -33,7 +33,7 @@ class FavoriteScreen extends StatelessWidget {
             ),
           ),
           onTap: () {
-            Navigator.pop(context);
+            Navigator.pushNamed(context, '/');
           },
         ),
       ),
@@ -135,11 +135,61 @@ class FavoriteScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    margin: EdgeInsets.only(left: 40, top: 210),
+                                    width: 150,
+                                    margin: EdgeInsets.only(left: 30, top: 210),
                                     alignment: Alignment.bottomLeft,
-                                    child: Text(
-                                      "testing",
-                                      style: TextStyle(color: Colors.red, fontFamily: 'Poppins', fontWeight: FontWeight.w300, fontSize: 10),
+                                    child : Consumer(builder: (context, watch, child) {
+                                      final genres =
+                                      watch(genreViewModelProvider);
+                                      context.read(genreViewModelProvider.notifier).getGenreList(state.data[index].genre);
+                                      return Text(
+                                        genres,
+                                        style: TextStyle(color: Colors.red, fontFamily: 'Poppins', fontWeight: FontWeight.w300, fontSize: 10,),
+                                        overflow: TextOverflow.ellipsis,
+                                        );
+                                    }),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 225, left: 30),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.star,
+                                          color: const Color(0xFFFF3365),
+                                          size: 15,
+                                        ),
+                                        Icon(
+                                          Icons.star,
+                                          color: const Color(0xFFFF3365),
+                                          size: 15,
+                                        ),
+                                        Icon(
+                                          Icons.star,
+                                          color: const Color(0xFFFF3365),
+                                          size: 15,
+                                        ),
+                                        Icon(
+                                          Icons.star,
+                                          color: const Color(0xFFFF3365),
+                                          size: 15,
+                                        ),
+                                        Icon(
+                                          Icons.star,
+                                          color: const Color(0xFFFF3365),
+                                          size: 15,
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(top: 2, left: 5),
+                                          child: Text(
+                                            "98 REVIEWS",
+                                            style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 10,
+                                                color: const Color(0xFF565665)),
+                                          ),
+                                        )
+                                      ],
                                     ),
                                   ),
                                   Container(
@@ -151,6 +201,7 @@ class FavoriteScreen extends StatelessWidget {
                                           fontWeight: FontWeight.w800,
                                           fontSize: 14,
                                           color: const Color(0xFFECECEC)),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   Container(

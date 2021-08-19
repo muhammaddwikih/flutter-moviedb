@@ -46,10 +46,10 @@ class MovieDetails extends StatelessWidget {
         //   width: double.infinity,
         //   height: 500,
         // );
-        Consumer(
+      Consumer(
       builder: (context, watch, child) {
         final state = watch(detailMoviesViewModelProvider);
-        if (state is Loading) {
+        if ( (state is Loading) || (state is Initial)) {
           return Container(
               height: 50,
               width: double.infinity,
