@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:moviedb/core/services/movie_service.dart';
 import 'package:moviedb/movie/movie_screen.dart';
@@ -8,48 +9,82 @@ import 'package:moviedb/movie/widgets/detail/detail_movies_view_model.dart';
 import 'package:moviedb/movie/widgets/popular/popular_movies.dart';
 import 'package:moviedb/movie/widgets/popular/popular_movies_view_model.dart';
 import 'package:moviedb/movie/widgets/summary/summary_detail.dart';
+import 'package:moviedb/movie/widgets/upcoming/upcoming_movies.dart';
+import 'package:moviedb/movie/widgets/upcoming/upcoming_movies_view_model.dart';
+import 'package:network_image_mock/network_image_mock.dart';
 
 import '../mock/mock_data.dart';
+import 'home_screen_test.mocks.dart';
 
+// class MockPopularMoviesViewModel extends Mock
+//     implements PopularMoviesViewModel {}
+//
+// class MockUpcomingMoviesViewModel extends Mock
+//     implements UpcomingMoviesViewModel {}
+//
+// class MockHomeService extends Mock implements MovieService {}
 
-class MockPopularViewModel extends Mock implements DetailMoviesViewModel {}
-class MockHomeService extends Mock implements MovieService {}
-
+@GenerateMocks([UpcomingMoviesViewModel, PopularMoviesViewModel, MovieService])
 void main() {
-  final mockHomeService = MockHomeService();
-  when(mockHomeService.getDetailMovie(436969)).thenAnswer((realInvocation) =>
+  final mockHomeService = MockMovieService();
+  when(mockHomeService.getUpcoming(1, 5)).thenAnswer((realInvocation) async =>
       Future.delayed(
-          Duration(milliseconds: 100), () => Future.value(dummyList)));
+          Duration(milliseconds: 3000), () => Future.value(dummyUpcomingList)));
 
-  final mockPopularMoviesViewModelProvider = MockPopularViewModel();
-  when(mockPopularMoviesViewModelProvider.getMovieById(436969)).thenReturn(null);
+  when(mockHomeService.getPopularMovie(1)).thenAnswer((realInvocation) async =>
+      Future.delayed(
+          Duration(milliseconds: 3000), () => Future.value(dummyUpcomingList)));
 
-  //used for some test
-  Widget createAppWithCenteredButton(Widget child) {
-    return MaterialApp(
-      home: Material(
-        child: Center(
-          child: ElevatedButton(
-            onPressed: null,
-            child: child,
-          ),
-        ),
-      ),
-    );
-  }
 
-  testWidgets('Popular Screen test', (WidgetTester tester) async {
-    final screen = SummaryDetail();
+  final mockPopularMoviesViewModel = MockPopularMoviesViewModel();
+  final mockUpcomingMoviesViewModel = MockUpcomingMoviesViewModel();
+  when(mockPopularMoviesViewModel.loadData())
+      .thenAnswer((realInvocation) => null);
+  when(mockUpcomingMoviesViewModel.loadData())
+      .thenAnswer((realInvocation) => null);
 
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(ProviderScope(overrides: [
-      detailMoviesViewModelProvider.overrideWithValue(mockPopularMoviesViewModelProvider)
-    ], child: MaterialApp(home: screen)));
+  testWidgets('Movie: Popular screen widget', (WidgetTester tester) async {
+    mockNetworkImagesFor(() async {
+      final screen = PopularMovies();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(ProviderScope(
+          overrides: [
+            popularMoviesViewModelProvider.overrideWithProvider(
+                StateNotifierProvider(
+                    (ref) => PopularMoviesViewModel(mockHomeService)))
+          ],
+          child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: screen,
+                ),
+              ))));
 
-    //test home render correctly
-    await tester.pumpAndSettle();
-    expect(find.byWidget(screen), findsOneWidget);
+      //test home render correctly
+      await tester.pumpAndSettle(Duration(milliseconds: 3000));
+      expect(find.byWidget(screen), findsOneWidget);
+    });
+  });
 
+  testWidgets('Movie: Upcoming screen widget', (WidgetTester tester) async {
+    mockNetworkImagesFor(() async {
+      final screen = UpcomingMovies();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(ProviderScope(
+          overrides: [
+            upcomingMoviesViewModelProvider.overrideWithProvider(
+                StateNotifierProvider(
+                        (ref) => UpcomingMoviesViewModel(mockHomeService)))
+          ],
+          child: MaterialApp(
+              home: SingleChildScrollView(
+                child: screen,
+              ))));
+
+      //test home render correctly
+      await tester.pumpAndSettle(Duration(milliseconds: 3000));
+      expect(find.byWidget(screen), findsOneWidget);
+    });
   });
 
   // testWidgets('Home Screen test with data', (WidgetTester tester) async {

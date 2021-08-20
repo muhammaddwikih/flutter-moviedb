@@ -28,9 +28,13 @@ class MyAppState extends State {
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print(message.data['path']);
-      if(message.data['path'] != null){
+      print(message.data['id']);
+      if(message.data['path'] == "/detail"){
+        navigatorKey.currentState!.pushNamed("/detail", arguments: int.parse(message.data['id'].toString()));
+      }else if(message.data['path'] != null){
         navigatorKey.currentState!.pushNamed(message.data['path']);
       }
+
     });
   }
 
